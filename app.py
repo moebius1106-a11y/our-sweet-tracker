@@ -12,10 +12,9 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. 全面修復深色模式字體隱形、跨瀏覽器適應與官方圖標抹除
+# 2. 強力 CSS：消除頂部留白、防止文字折行斷句、隱藏官方雜項
 st.markdown("""
 <style>
-/* 徹底去除頂部空白，手機介面緊湊 */
 .block-container {
     padding-top: 0.8rem !important;
     padding-bottom: 2rem !important;
@@ -23,7 +22,6 @@ st.markdown("""
     padding-right: 0.8rem !important;
 }
 
-/* 抹除官方管理按鈕、頭貼、選單 */
 #MainMenu, footer, header {
     visibility: hidden !important;
     display: none !important;
@@ -43,21 +41,15 @@ div[data-testid="stDecoration"] {
     pointer-events: none !important;
 }
 
-/* 強制鎖定全站淺粉色系（避免 Brave/手機深色模式造成白字隱形） */
-:root {
-    color-scheme: light !important;
-}
 body {
     -webkit-font-smoothing: antialiased;
     font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Helvetica Neue", sans-serif;
     color: #4A3B40 !important;
-    background-color: #FFF5F7 !important;
 }
 .stApp {
     background: linear-gradient(180deg, #FFF5F7 0%, #FFFFFF 100%) !important;
 }
 
-/* 卡片設計 */
 .pink-card {
     background: #FFFFFF !important;
     padding: 16px 18px !important;
@@ -78,9 +70,8 @@ body {
     color: #C2255C !important;
 }
 
-/* 徹底修復：所有文字標籤在深色模式下全部維持清晰深色 */
-p, span, label, div, h1, h2, h3, h4, li {
-    color: #4A3B40 !important;
+p, span, label, div {
+    color: #4A3B40;
 }
 .hint-text {
     color: #8C6D77 !important;
@@ -88,31 +79,9 @@ p, span, label, div, h1, h2, h3, h4, li {
     text-align: center !important;
     margin-top: 6px !important;
     display: block !important;
+    line-height: 1.4 !important;
 }
 
-/* 徹底修復折疊面板（Expander）在 Brave 裡白字隱形的問題 */
-div[data-testid="stExpander"] {
-    background-color: #FFFFFF !important;
-    border: 1px solid #FFCCD5 !important;
-    border-radius: 16px !important;
-    margin-bottom: 12px !important;
-}
-div[data-testid="stExpander"] summary {
-    background-color: #FFFFFF !important;
-    border-radius: 16px !important;
-    padding: 10px 14px !important;
-}
-div[data-testid="stExpander"] summary * {
-    color: #5C2D3B !important;
-    font-weight: 700 !important;
-    font-size: 0.95rem !important;
-    fill: #5C2D3B !important;
-}
-div[data-testid="stExpander"] details[open] summary {
-    border-bottom: 1px solid #FFE3E8 !important;
-}
-
-/* 呼叫男友與行事曆按鈕樣式 */
 .btn-line {
     display: block !important;
     background: linear-gradient(135deg, #06C755 0%, #00B900 100%) !important;
@@ -140,6 +109,7 @@ div[data-testid="stExpander"] details[open] summary {
     font-size: 0.95rem !important;
     white-space: nowrap !important;
 }
+
 .stButton>button, .stDownloadButton>button {
     background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%) !important;
     color: #5C2D3B !important;
@@ -150,10 +120,25 @@ div[data-testid="stExpander"] details[open] summary {
     box-shadow: 0 4px 12px rgba(255, 154, 158, 0.4) !important;
     white-space: nowrap !important;
 }
+
+div[data-testid="stExpander"] {
+    background-color: #FFFFFF !important;
+    border: 1px solid #FFE3E8 !important;
+    border-radius: 16px !important;
+}
+div[data-testid="stExpander"] summary {
+    font-size: 0.92rem !important;
+    font-weight: 600 !important;
+    color: #5C2D3B !important;
+    padding: 10px 12px !important;
+}
+div[data-testid="stExpander"] summary p {
+    font-size: 0.92rem !important;
+    margin: 0 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# --- 後台即時推播通知 ---
 NTFY_TOPIC = "lu-care-moebius-alert"
 
 def send_push_notification(title, message, priority="default"):
@@ -194,16 +179,14 @@ def save_data(data):
 
 data = load_data()
 
-# 標題區
 st.markdown("""
 <div style="text-align: center; margin-top: 5px; margin-bottom: 15px;">
     <div style="font-size: 2rem;">🌸</div>
     <div class="pink-title">我的 LU 寶貝專屬手帳</div>
-    <div style="color: #8C6D77; font-size: 0.88rem; margin-top: 3px;">隨時守護妳的身體與好心情・專屬紀錄</div>
+    <div style="color: #A37081; font-size: 0.88rem; margin-top: 3px;">隨時守護妳的身體與好心情・專屬紀錄</div>
 </div>
 """, unsafe_allow_html=True)
 
-# 週期推算邏輯
 period_start = date.fromisoformat(data["last_period_start"])
 cycle_days = data["cycle_length"]
 today = date.today()
@@ -228,7 +211,6 @@ else:
     phase = "🌙 經前前夕 (PMS)・溫柔守護"
     care_tip = "這兩天月經快報到了，容易水腫或下腹悶悶的，心情敏感都是正常的～別給自己壓力，凡事都有我陪著妳喔！"
 
-# 1. 今日暖心留言
 if data.get("sweet_message"):
     st.markdown(f"""
     <div class="pink-card" style="border-left-color: #FF6584; background: #FFF7F9;">
@@ -237,7 +219,6 @@ if data.get("sweet_message"):
     </div>
     """, unsafe_allow_html=True)
 
-# 2. 當前狀態卡片
 st.markdown(f"""
 <div class="pink-card">
     <div class="status-badge">{phase}</div>
@@ -248,7 +229,6 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# 3. 推估數據卡片
 c1, c2 = st.columns(2)
 with c1:
     st.markdown(f"""
@@ -270,49 +250,10 @@ with c2:
     </div>
     """, unsafe_allow_html=True)
 
-# 4. 舒緩音樂專區（修復版：採用無防盜鏈、支援 iPhone/Android 跨域的 MP3 直鏈）
-with st.expander("🎧 點此播放舒緩輕音樂與白噪音", expanded=False):
-    st.markdown("<p style='font-size:0.9rem; margin-bottom:8px;'>🎵 點擊播放超輕柔旋律，讓身心平靜、舒緩悶脹緊繃：</p>", unsafe_allow_html=True)
-    tab_music1, tab_music2 = st.tabs(["🎹 空靈輕柔鋼琴", "🌧️ 溫柔細雨白噪音"])
-    
-    with tab_music1:
-        st.markdown("**薩提：第 1 號吉諾佩蒂（極靜催眠鋼琴）**")
-        # 採用 Google Actions 公共 CDN 的相容 MP3 音訊，保證 iPhone/Android/跨瀏覽器暢通播放
-        st.audio("https://actions.google.com/sounds/v1/water/rain_heavy.ogg", format="audio/mp3") # fallback 保障
-        st.markdown("""
-        <audio controls preload="none" style="width: 100%; margin-top: 5px;">
-            <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=soft-piano-100-bpm-121529.mp3" type="audio/mp3">
-            <source src="https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverending_Story.mp3" type="audio/mp3">
-        </audio>
-        """, unsafe_allow_html=True)
-        st.markdown("<span style='font-size:0.8rem; color:#8C6D77;'>✨ 慢節奏純鋼琴旋律，陪伴寶貝放鬆心情與安穩入眠。</span>", unsafe_allow_html=True)
-        
-    with tab_music2:
-        st.markdown("**窗邊靜謐細雨聲（深層舒緩白噪音）**")
-        st.markdown("""
-        <audio controls preload="none" style="width: 100%; margin-top: 5px;">
-            <source src="https://commondatastorage.googleapis.com/codeskulptor-assets/sounddogs/rain.mp3" type="audio/mp3">
-        </audio>
-        """, unsafe_allow_html=True)
-        st.markdown("<span style='font-size:0.8rem; color:#8C6D77;'>✨ 柔和綿密的純雨聲，遮蔽雜音、安撫經期不適感。</span>", unsafe_allow_html=True)
-
-# 5. 經痛自我護理小技巧
-with st.expander("🧘‍♀️ 經痛舒緩・自我護理小技巧", expanded=False):
-    st.markdown("""
-    * **🌸 嬰兒式放鬆（舒緩下腹與下背）**：  
-      跪坐於床墊或地毯上，臀部貼近腳跟，身體往前趴下，額頭貼床，雙手放鬆前伸，深呼吸維持 3～5 分鐘。
-    * **🌸 三陰交穴輕按（告別悶痛）**：  
-      位於內踝尖上方約 4 指寬處，用大拇指溫柔按揉 3 分鐘，感到微酸脹即可，有助循環舒緩。
-    * **🌸 熱敷黃金點**：  
-      熱敷袋置於肚臍下方 3 指寬的關元穴，持續溫熱 15 分鐘，放鬆子宮周圍肌肉。
-    """)
-
-# 6. 一鍵開啟男友 LINE
 line_target_url = data.get("my_line_url", "https://line.me/ti/p/3u_xwcKRUB")
 st.markdown(f'<a href="{line_target_url}" target="_blank" class="btn-line">💬 開啟男友 LINE（聊天 / 通話）</a>', unsafe_allow_html=True)
 st.markdown('<span class="hint-text">✨ 點擊直接開啟男友名片，隨時隨地找我聊天或通話</span>', unsafe_allow_html=True)
 
-# 7. 行事曆提醒功能
 event_title = "🌸 LU寶貝生理期呵護提醒"
 event_details = "記得多喝溫水、肚子保暖、放鬆心情～有另一半隨時疼妳哄妳 🥰"
 gcal_start = next_period_start.strftime("%Y%m%d")
@@ -347,7 +288,6 @@ with col_cal2:
         use_container_width=True
     )
 
-# 8. 修改經期設定面板（更新時即時推播到你的 Android 手機）
 with st.expander("⚙️ 點此修改經期設定與悄悄話", expanded=False):
     default_date = date.fromisoformat(data.get("last_period_start", "2026-09-21"))
     new_period_start = st.date_input("月經開始第一天", value=default_date)
