@@ -12,10 +12,15 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. 乾淨純粹的排版 CSS（不與系統主題打架）
+# 2. 強制淺色主題、修復深色模式反黑、徹底隱藏開發者圖標
 st.markdown("""
 <style>
-/* 去除頂部與邊界留白 */
+/* 強制停用深色模式，維持粉白溫暖基調 */
+:root {
+    color-scheme: light !important;
+}
+
+/* 消除頂部與四周多餘留白 */
 .block-container {
     padding-top: 0.8rem !important;
     padding-bottom: 2rem !important;
@@ -41,7 +46,17 @@ div[data-testid="stDecoration"] {
     visibility: hidden !important;
 }
 
-/* 粉紅卡片 */
+body {
+    -webkit-font-smoothing: antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Helvetica Neue", sans-serif;
+    color: #4A3B40 !important;
+    background-color: #FFF5F7 !important;
+}
+.stApp {
+    background: linear-gradient(180deg, #FFF5F7 0%, #FFFFFF 100%) !important;
+}
+
+/* 粉紅卡片美化 */
 .pink-card {
     background: #FFFFFF !important;
     padding: 16px 18px !important;
@@ -61,6 +76,10 @@ div[data-testid="stDecoration"] {
     font-weight: bold !important;
     color: #C2255C !important;
 }
+
+p, span, label, div, h1, h2, h3, h4 {
+    color: #4A3B40 !important;
+}
 .hint-text {
     color: #8C6D77 !important;
     font-size: 0.85rem !important;
@@ -69,7 +88,43 @@ div[data-testid="stDecoration"] {
     display: block !important;
 }
 
-/* 呼叫 LINE 與行事曆按鈕 */
+/* 徹底解決 Expander 與輸入元件深色反黑問題 */
+div[data-testid="stExpander"] {
+    background-color: #FFFFFF !important;
+    border: 1px solid #FFCCD5 !important;
+    border-radius: 16px !important;
+    margin-bottom: 12px !important;
+}
+div[data-testid="stExpander"] summary {
+    background-color: #FFFFFF !important;
+    border-radius: 16px !important;
+}
+div[data-testid="stExpander"] summary * {
+    color: #D6336C !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    fill: #D6336C !important;
+}
+div[data-testid="stExpander"] details[open] summary {
+    border-bottom: 1px solid #FFE3E8 !important;
+}
+
+/* 鎖定輸入框為純白底色、深色字體 */
+[data-baseweb="input"], [data-baseweb="base-input"], textarea {
+    background-color: #FFFFFF !important;
+    color: #4A3B40 !important;
+    border-radius: 12px !important;
+}
+[data-baseweb="input"] input {
+    color: #4A3B40 !important;
+}
+div[data-testid="stNumberInput"] button {
+    background-color: #FFF0F3 !important;
+    color: #D6336C !important;
+    border: 1px solid #FFCCD5 !important;
+}
+
+/* 按鈕樣式 */
 .btn-line {
     display: block !important;
     background: linear-gradient(135deg, #06C755 0%, #00B900 100%) !important;
@@ -97,8 +152,6 @@ div[data-testid="stDecoration"] {
     font-size: 0.95rem !important;
     white-space: nowrap !important;
 }
-
-/* 按鈕美化 */
 .stButton>button, .stDownloadButton>button {
     background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%) !important;
     color: #5C2D3B !important;
@@ -110,22 +163,16 @@ div[data-testid="stDecoration"] {
     white-space: nowrap !important;
 }
 
-/* 確保 BaseWeb 日期與輸入框背景全為純白、文字深色清晰 */
-[data-baseweb="input"], [data-baseweb="base-input"], textarea {
-    background-color: #FFFFFF !important;
-    color: #4A3B40 !important;
-    border-radius: 12px !important;
-}
-[data-baseweb="input"] input {
-    color: #4A3B40 !important;
+div[data-testid="stProgressBar"] > div > div {
+    background-color: #FF8FA3 !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# 後台即時推播函數
+# 3. Android 即時推播函式 (ntfy.sh 雙向容錯機制)
 NTFY_TOPIC = "lu-care-moebius-alert"
 
-def send_push_notification(title, message, priority="default"):
+def send_push_notification(title, message, priority="high"):
     try:
         headers = {
             "Title": title.encode("utf-8"),
@@ -141,6 +188,7 @@ def send_push_notification(title, message, priority="default"):
     except Exception:
         pass
 
+# 4. 資料存取層
 DATA_FILE = "cycle_data.json"
 
 def load_data():
@@ -172,9 +220,9 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 週期推算邏輯
+# 5. 週期演算法核心
 period_start = date.fromisoformat(data["last_period_start"])
-cycle_days = data["cycle_length"]
+cycle_days = max(int(data.get("cycle_length", 28)), 21)
 today = date.today()
 
 next_period_start = period_start + timedelta(days=cycle_days)
@@ -198,7 +246,7 @@ else:
     phase = "🌙 經前前夕 (PMS)・溫柔守護"
     care_tip = "這兩天月經快報到了，容易水腫或下腹悶悶的，心情敏感都是正常的～別給自己壓力，凡事都有我陪著妳喔！"
 
-# 1. 今日暖心留言
+# 6. 今日專屬悄悄話
 if data.get("sweet_message"):
     st.markdown(f"""
     <div class="pink-card" style="border-left-color: #FF6584; background: #FFF7F9;">
@@ -207,7 +255,7 @@ if data.get("sweet_message"):
     </div>
     """, unsafe_allow_html=True)
 
-# 2. 當前狀態卡片
+# 7. 當前生理階段卡片
 st.markdown(f"""
 <div class="pink-card">
     <div class="status-badge">{phase}</div>
@@ -218,18 +266,18 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# 3. 穩定版原生進度條（附帶百分比顯示）
+# 8. 週期進度條（含百分比與滿格提示防呆）
 progress_ratio = min(max(day_in_cycle / cycle_days, 0.0), 1.0)
 progress_pct = int(progress_ratio * 100)
-
 if progress_pct >= 100:
-    pct_msg = "100%（本週期最後倒數，隨時準備迎接新週期）"
+    pct_msg = "100%（本週期最後倒數，隨時迎接新週期）"
 else:
     pct_msg = f"{progress_pct}%"
 
 st.markdown(f"<span style='font-size:0.88rem; font-weight:bold; color:#D6336C;'>🌸 本月週期進度：{pct_msg}</span>", unsafe_allow_html=True)
 st.progress(progress_ratio)
-# 4. 推估數據卡片
+
+# 9. 關鍵日期推估
 c1, c2 = st.columns(2)
 with c1:
     st.markdown(f"""
@@ -251,12 +299,12 @@ with c2:
     </div>
     """, unsafe_allow_html=True)
 
-# 5. 一鍵開啟男友 LINE
+# 10. 一鍵開啟男友 LINE
 line_target_url = data.get("my_line_url", "https://line.me/ti/p/3u_xwcKRUB")
 st.markdown(f'<a href="{line_target_url}" target="_blank" class="btn-line">💬 開啟男友 LINE（聊天 / 通話）</a>', unsafe_allow_html=True)
 st.markdown('<span class="hint-text">✨ 點擊直接開啟男友名片，隨時隨地找我聊天或通話</span>', unsafe_allow_html=True)
 
-# 6. 行事曆提醒
+# 11. 行事曆自動提醒
 event_title = "🌸 LU寶貝生理期呵護提醒"
 event_details = "記得多喝溫水、肚子保暖、放鬆心情～有另一半隨時疼妳哄妳 🥰"
 gcal_start = next_period_start.strftime("%Y%m%d")
@@ -291,7 +339,7 @@ with col_cal2:
         use_container_width=True
     )
 
-# 7. 修改經期設定面板
+# 12. 修改經期設定面板（更新時即時推送通知至你的 Android）
 with st.expander("⚙️ 點此修改經期設定與悄悄話", expanded=False):
     default_date = date.fromisoformat(data.get("last_period_start", "2026-09-21"))
     new_period_start = st.date_input("月經開始第一天", value=default_date)
@@ -304,6 +352,7 @@ with st.expander("⚙️ 點此修改經期設定與悄悄話", expanded=False):
         data["sweet_message"] = new_msg
         save_data(data)
         
+        # 觸發 Android 手機即時推播
         send_push_notification(
             title="🌸 LU寶貝的手帳有新更新！",
             message=f"寶貝更新了手帳！\n最後經期開始日設為：{new_period_start}\n週期：{new_cycle_length}天",
