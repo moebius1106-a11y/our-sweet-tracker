@@ -218,11 +218,17 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# 3. 穩定版原生進度條
+# 3. 穩定版原生進度條（附帶百分比顯示）
 progress_ratio = min(max(day_in_cycle / cycle_days, 0.0), 1.0)
-st.markdown("<span style='font-size:0.85rem; font-weight:bold; color:#D6336C;'>🌸 本月週期進度：</span>", unsafe_allow_html=True)
-st.progress(progress_ratio)
+progress_pct = int(progress_ratio * 100)
 
+if progress_pct >= 100:
+    pct_msg = "100%（本週期最後倒數，隨時準備迎接新週期）"
+else:
+    pct_msg = f"{progress_pct}%"
+
+st.markdown(f"<span style='font-size:0.88rem; font-weight:bold; color:#D6336C;'>🌸 本月週期進度：{pct_msg}</span>", unsafe_allow_html=True)
+st.progress(progress_ratio)
 # 4. 推估數據卡片
 c1, c2 = st.columns(2)
 with c1:
