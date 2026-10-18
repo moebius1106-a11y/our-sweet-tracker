@@ -12,15 +12,13 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. 強制淺色主題、修復深色模式反黑、徹底補齊精緻粉嫩外框
+# 2. 強制淺色主題、修復外框不見、徹底隱藏開發者圖標
 st.markdown("""
 <style>
-/* 強制停用深色模式，維持粉白溫暖基調 */
 :root {
     color-scheme: light !important;
 }
 
-/* 消除頂部與四周多餘留白 */
 .block-container {
     padding-top: 0.8rem !important;
     padding-bottom: 2rem !important;
@@ -109,31 +107,42 @@ div[data-testid="stExpander"] details[open] summary {
     border-bottom: 1px solid #FFE3E8 !important;
 }
 
-/* --- 核心修復：所有輸入框（日期、數字、留言）補齊精緻粉紅外框 --- */
-div[data-baseweb="input"], 
-div[data-baseweb="base-input"],
+/* --- 核心修復：強制所有輸入元件（日期框、數字框、留言框）顯示清晰粉嫩外框 --- */
+/* 1. 日期輸入框 (DateInput) 確切外框穿透 */
+div[data-testid="stDateInput"] > div,
+div[data-testid="stDateInput"] [data-baseweb="input"] {
+    background-color: #FFFFFF !important;
+    border: 1.5px solid #FFCCD5 !important;
+    border-radius: 12px !important;
+}
+div[data-testid="stDateInput"] input {
+    color: #4A3B40 !important;
+    background-color: transparent !important;
+}
+
+/* 2. 數字輸入框 (NumberInput) 與加減按鈕外框 */
+div[data-testid="stNumberInput"] > div,
+div[data-testid="stNumberInput"] [data-baseweb="input"] {
+    background-color: #FFFFFF !important;
+    border: 1.5px solid #FFCCD5 !important;
+    border-radius: 12px !important;
+}
+div[data-testid="stNumberInput"] input {
+    color: #4A3B40 !important;
+    background-color: transparent !important;
+}
+div[data-testid="stNumberInput"] button {
+    background-color: #FFF0F3 !important;
+    color: #D6336C !important;
+    border: 1px solid #FFCCD5 !important;
+}
+
+/* 3. 悄悄話文字區域 (TextArea) 外框 */
 div[data-testid="stTextArea"] textarea {
     background-color: #FFFFFF !important;
     color: #4A3B40 !important;
     border: 1.5px solid #FFCCD5 !important;
     border-radius: 12px !important;
-}
-
-/* 確保日期與數字輸入框內部文字為深色清楚顯示 */
-div[data-baseweb="input"] input {
-    color: #4A3B40 !important;
-}
-
-/* 數字輸入框左右對接美化 */
-div[data-testid="stNumberInput"] div[data-baseweb="input"] {
-    border-right: none !important;
-    border-top-right-radius: 0px !important;
-    border-bottom-right-radius: 0px !important;
-}
-div[data-testid="stNumberInput"] button {
-    background-color: #FFF0F3 !important;
-    color: #D6336C !important;
-    border: 1.5px solid #FFCCD5 !important;
 }
 
 /* 按鈕樣式 */
@@ -351,7 +360,7 @@ with col_cal2:
         use_container_width=True
     )
 
-# 12. 修改經期設定面板（完全防反黑＋外框補全）
+# 12. 修改經期設定面板（完全防反黑＋三層外框確切補齊）
 with st.expander("⚙️ 點此修改經期設定與悄悄話", expanded=False):
     default_date = date.fromisoformat(data.get("last_period_start", "2026-09-21"))
     new_period_start = st.date_input("月經開始第一天", value=default_date)
