@@ -12,10 +12,10 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. 注入純淨 CSS（消除頂部留白、隱藏官方雜項與大頭貼、粉嫩圓角卡片）
+# 2. 強力 CSS：徹底隱藏右下角皇冠與頭貼，修復字體顏色對比
 st.markdown("""
 <style>
-/* 徹底去除頂部巨大空白，讓手機版緊湊精緻 */
+/* 徹底去除頂部空白 */
 .block-container {
     padding-top: 1rem !important;
     padding-bottom: 2rem !important;
@@ -23,71 +23,99 @@ st.markdown("""
     padding-right: 1rem !important;
 }
 
-/* 隱藏 Streamlit 官方雜項、大頭貼、皇冠按鈕 */
-#MainMenu {visibility: hidden; display: none !important;}
-footer {visibility: hidden; display: none !important;}
-header {visibility: hidden; display: none !important;}
-[data-testid="manage-app-button"] {display: none !important;}
-.viewerBadge_container__1QSob, .viewerBadge_link__1S137 {display: none !important;}
-div[class*="viewerBadge_"] {display: none !important;}
-div[class*="Profile"] {display: none !important;}
+/* 強力抹除所有官方浮水印、管理按鈕、頭貼、選單 */
+#MainMenu, footer, header {
+    visibility: hidden !important;
+    display: none !important;
+}
+[data-testid="manage-app-button"],
+.viewerBadge_container__1QSob,
+.viewerBadge_link__1S137,
+div[class*="viewerBadge_"],
+div[class*="Profile"],
+div[class*="toolbar"],
+div[class*="StatusWidget"],
+div[data-testid="stStatusWidget"],
+div[data-testid="stDecoration"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
 
+/* 設定全站粉白底色與字體 */
 body {
     -webkit-font-smoothing: antialiased;
     font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Helvetica Neue", sans-serif;
+    color: #4A3B40 !important;
 }
 .stApp {
-    background: linear-gradient(180deg, #FFF5F7 0%, #FFFFFF 100%);
+    background: linear-gradient(180deg, #FFF5F7 0%, #FFFFFF 100%) !important;
 }
 
+/* 卡片設計 */
 .pink-card {
-    background: #FFFFFF;
-    padding: 16px 18px;
-    border-radius: 20px;
-    box-shadow: 0 4px 15px rgba(255, 175, 189, 0.2);
-    margin-bottom: 14px;
-    border-left: 6px solid #FF8FA3;
+    background: #FFFFFF !important;
+    padding: 16px 18px !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 15px rgba(255, 175, 189, 0.25) !important;
+    margin-bottom: 14px !important;
+    border-left: 6px solid #FF8FA3 !important;
 }
 .pink-title {
-    color: #D6336C;
-    font-size: 1.4rem;
-    font-weight: 800;
-    letter-spacing: 0.5px;
+    color: #D6336C !important;
+    font-size: 1.4rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.5px !important;
 }
 .status-badge {
-    font-size: 1.15rem;
-    font-weight: bold;
-    color: #C2255C;
+    font-size: 1.15rem !important;
+    font-weight: bold !important;
+    color: #C2255C !important;
+}
+
+/* 強制修復文字顏色（解決看不到說明的問題） */
+p, span, label, div {
+    color: #4A3B40;
+}
+.hint-text {
+    color: #8C6D77 !important;
+    font-size: 0.88rem !important;
+    text-align: center !important;
+    margin-top: 6px !important;
+    display: block !important;
+    font-weight: 500 !important;
 }
 
 /* 呼叫按鈕樣式 */
 .btn-line {
-    display: block;
-    background: linear-gradient(135deg, #06C755 0%, #00B900 100%);
-    color: white !important;
-    text-align: center;
-    padding: 12px 16px;
-    border-radius: 22px;
-    font-weight: bold;
-    text-decoration: none;
-    margin: 6px 0;
-    box-shadow: 0 4px 10px rgba(6, 199, 85, 0.3);
-    font-size: 1rem;
+    display: block !important;
+    background: linear-gradient(135deg, #06C755 0%, #00B900 100%) !important;
+    color: #FFFFFF !important;
+    text-align: center !important;
+    padding: 12px 16px !important;
+    border-radius: 22px !important;
+    font-weight: bold !important;
+    text-decoration: none !important;
+    margin: 6px 0 !important;
+    box-shadow: 0 4px 10px rgba(6, 199, 85, 0.3) !important;
+    font-size: 1rem !important;
 }
 .btn-cal {
-    display: block;
-    background: #FFF0F5;
+    display: block !important;
+    background: #FFF0F5 !important;
     color: #D6336C !important;
-    border: 1px solid #FFCCD5;
-    text-align: center;
-    padding: 10px 14px;
-    border-radius: 18px;
-    font-weight: bold;
-    text-decoration: none;
-    font-size: 0.95rem;
+    border: 1px solid #FFCCD5 !important;
+    text-align: center !important;
+    padding: 10px 14px !important;
+    border-radius: 18px !important;
+    font-weight: bold !important;
+    text-decoration: none !important;
+    font-size: 0.95rem !important;
 }
 
-.stButton>button {
+/* 下載與一般按鈕 */
+.stButton>button, .stDownloadButton>button {
     background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%) !important;
     color: #5C2D3B !important;
     border-radius: 22px !important;
@@ -95,6 +123,19 @@ body {
     padding: 10px 24px !important;
     font-weight: 700 !important;
     box-shadow: 0 4px 12px rgba(255, 154, 158, 0.4) !important;
+}
+
+/* 折疊選單（Expander）文字顏色加深修復 */
+.streamlit-expanderHeader {
+    color: #5C2D3B !important;
+    font-weight: bold !important;
+    background-color: #FFFFFF !important;
+    border-radius: 14px !important;
+}
+div[data-testid="stExpander"] {
+    background-color: #FFFFFF !important;
+    border: 1px solid #FFE3E8 !important;
+    border-radius: 16px !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -219,7 +260,7 @@ with c2:
 # --- 4. 專屬按鈕：一鍵開啟對你的 LINE ---
 line_target_url = data.get("my_line_url", "https://line.me/ti/p/3u_xwcKRUB")
 st.markdown(f'<a href="{line_target_url}" target="_blank" class="btn-line">💬 開啟對你的 LINE（找男友聊聊 / 通話）</a>', unsafe_allow_html=True)
-st.caption("✨ 點擊直接開啟男友名片，隨時隨地能找你聊天或通話。")
+st.markdown('<span class="hint-text">✨ 點擊直接開啟男友名片，隨時隨地能找你聊天或通話</span>', unsafe_allow_html=True)
 
 # --- 5. 一鍵加入日曆提醒 ---
 event_title = "🌸 LU寶貝生理期呵護提醒"
@@ -256,7 +297,7 @@ with col_cal2:
         use_container_width=True
     )
 
-# --- 6. 隨時可修改的設定面板（更新時自動推播到你的 Android 手機） ---
+# --- 6. 隨時可修改的設定面板 ---
 with st.expander("⚙️ 點此修改：經期日期、週期天數與悄悄話", expanded=False):
     default_date = date.fromisoformat(data.get("last_period_start", "2026-09-21"))
     new_period_start = st.date_input("月經開始第一天", value=default_date)
@@ -269,7 +310,6 @@ with st.expander("⚙️ 點此修改：經期日期、週期天數與悄悄話"
         data["sweet_message"] = new_msg
         save_data(data)
         
-        # 🔔 自動發送通知給你的 Android 手機
         send_push_notification(
             title="🌸 LU寶貝的手帳有新更新！",
             message=f"寶貝更新了手帳！\n最後經期開始日設為：{new_period_start}\n週期：{new_cycle_length}天",
