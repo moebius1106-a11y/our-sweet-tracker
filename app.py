@@ -8,13 +8,21 @@ import urllib.parse
 st.set_page_config(
     page_title="🌸 我的LU寶貝專屬手帳",
     page_icon="🌸",
-    layout="centered",
-    initial_sidebar_state="collapsed"
+    layout="centered"
 )
 
-# 2. 注入純淨 CSS（隱藏官方圖標、大頭貼，優化 iPhone 介面與粉嫩風格）
+# 2. 徹底消除頂部留白、隱藏官方按鈕與大頭貼、優化手機排版
 st.markdown("""
 <style>
+/* 徹底去除頂部巨大空白，讓畫面緊湊精緻 */
+.block-container {
+    padding-top: 1rem !important;
+    padding-bottom: 2rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+/* 隱藏 Streamlit 官方雜項、大頭貼、皇冠按鈕 */
 #MainMenu {visibility: hidden; display: none !important;}
 footer {visibility: hidden; display: none !important;}
 header {visibility: hidden; display: none !important;}
@@ -33,15 +41,15 @@ body {
 
 .pink-card {
     background: #FFFFFF;
-    padding: 18px 20px;
+    padding: 16px 18px;
     border-radius: 20px;
-    box-shadow: 0 6px 18px rgba(255, 175, 189, 0.2);
-    margin-bottom: 16px;
+    box-shadow: 0 4px 15px rgba(255, 175, 189, 0.2);
+    margin-bottom: 14px;
     border-left: 6px solid #FF8FA3;
 }
 .pink-title {
     color: #D6336C;
-    font-size: 1.45rem;
+    font-size: 1.4rem;
     font-weight: 800;
     letter-spacing: 0.5px;
 }
@@ -63,19 +71,6 @@ body {
     text-decoration: none;
     margin: 6px 0;
     box-shadow: 0 4px 10px rgba(6, 199, 85, 0.3);
-    font-size: 1rem;
-}
-.btn-phone {
-    display: block;
-    background: linear-gradient(135deg, #FF6584 0%, #FF8FA3 100%);
-    color: white !important;
-    text-align: center;
-    padding: 12px 16px;
-    border-radius: 22px;
-    font-weight: bold;
-    text-decoration: none;
-    margin: 6px 0;
-    box-shadow: 0 4px 10px rgba(255, 101, 132, 0.3);
     font-size: 1rem;
 }
 .btn-cal {
@@ -116,9 +111,7 @@ def load_data():
         "last_period_start": "2026-09-21",
         "cycle_length": 28,
         "sweet_message": "今天也要多喝溫水、肚子暖暖的喔！最愛妳了 🥰",
-        "my_line_url": "https://line.me/ti/p/3u_xwcKRUB",
-        "my_line_id": "moebius5180",
-        "my_phone": ""
+        "my_line_url": "https://line.me/ti/p/3u_xwcKRUB"
     }
 
 def save_data(data):
@@ -129,36 +122,12 @@ data = load_data()
 
 # 標題區
 st.markdown("""
-<div style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
-    <div style="font-size: 2.2rem;">🌸</div>
+<div style="text-align: center; margin-top: 5px; margin-bottom: 15px;">
+    <div style="font-size: 2rem;">🌸</div>
     <div class="pink-title">我的 LU 寶貝專屬手帳</div>
-    <div style="color: #A37081; font-size: 0.9rem; margin-top: 4px;">隨時守護妳的身體與好心情・專屬紀錄</div>
+    <div style="color: #A37081; font-size: 0.88rem; margin-top: 3px;">隨時守護妳的身體與好心情・專屬紀錄</div>
 </div>
 """, unsafe_allow_html=True)
-
-# --- 側邊欄：記錄與設定 ---
-with st.sidebar:
-    st.header("⚙️ 週期設置與專屬資訊")
-    default_date = date.fromisoformat(data.get("last_period_start", "2026-09-21"))
-    new_period_start = st.date_input("月經開始第一天", value=default_date)
-    new_cycle_length = st.number_input("平均週期天數", min_value=21, max_value=45, value=data.get("cycle_length", 28))
-    
-    st.subheader("💌 今日給 LU 寶貝的悄悄話")
-    new_msg = st.text_area("寫下暖心留言", value=data.get("sweet_message", ""))
-    
-    st.subheader("📞 男友專屬聯絡設定")
-    line_url_input = st.text_input("你的 LINE 加好友連結", value=data.get("my_line_url", "https://line.me/ti/p/3u_xwcKRUB"))
-    phone_input = st.text_input("你的電話號碼 (選填)", value=data.get("my_phone", ""))
-    
-    if st.button("💾 儲存並同步更新"):
-        data["last_period_start"] = str(new_period_start)
-        data["cycle_length"] = int(new_cycle_length)
-        data["sweet_message"] = new_msg
-        data["my_line_url"] = line_url_input
-        data["my_phone"] = phone_input
-        save_data(data)
-        st.success("已更新！")
-        st.rerun()
 
 # --- 週期推算邏輯 ---
 period_start = date.fromisoformat(data["last_period_start"])
@@ -209,9 +178,9 @@ st.markdown(f"""
 c1, c2 = st.columns(2)
 with c1:
     st.markdown(f"""
-    <div class="pink-card" style="border-left-color: #FFB3C1; text-align: center; padding: 14px;">
+    <div class="pink-card" style="border-left-color: #FFB3C1; text-align: center; padding: 12px;">
         <div style="font-size: 0.85rem; color: #8A6570;">🎯 推算排卵日</div>
-        <div style="font-size: 1.35rem; font-weight: bold; color: #D6336C; margin: 4px 0;">{ovulation_date.strftime("%m月%d日")}</div>
+        <div style="font-size: 1.3rem; font-weight: bold; color: #D6336C; margin: 3px 0;">{ovulation_date.strftime("%m月%d日")}</div>
         <div style="font-size: 0.75rem; color: #B08D97;">易孕：{fertile_start.strftime("%m/%d")}~{fertile_end.strftime("%m/%d")}</div>
     </div>
     """, unsafe_allow_html=True)
@@ -220,41 +189,19 @@ with c2:
     days_left = (next_period_start - today).days
     delta_text = f"約 {days_left} 天後" if days_left >= 0 else "預計報到中"
     st.markdown(f"""
-    <div class="pink-card" style="border-left-color: #FF8FA3; text-align: center; padding: 14px;">
+    <div class="pink-card" style="border-left-color: #FF8FA3; text-align: center; padding: 12px;">
         <div style="font-size: 0.85rem; color: #8A6570;">🩸 下次月經預估</div>
-        <div style="font-size: 1.35rem; font-weight: bold; color: #D6336C; margin: 4px 0;">{next_period_start.strftime("%m月%d日")}</div>
+        <div style="font-size: 1.3rem; font-weight: bold; color: #D6336C; margin: 3px 0;">{next_period_start.strftime("%m月%d日")}</div>
         <div style="font-size: 0.75rem; color: #E64980; font-weight: bold;">{delta_text}</div>
     </div>
     """, unsafe_allow_html=True)
 
-# --- 4. 專屬按鈕：一鍵開啟對你的 LINE 與通話 ---
-st.markdown("""
-<div style="margin-top: 18px; margin-bottom: 8px; text-align: center;">
-    <span style="font-size: 1.05rem; font-weight: bold; color: #D6336C;">🧸 專屬找男友按鈕</span>
-</div>
-""", unsafe_allow_html=True)
-
+# --- 4. 專屬按鈕：一鍵開啟對你的 LINE ---
 line_target_url = data.get("my_line_url", "https://line.me/ti/p/3u_xwcKRUB")
-phone_val = data.get("my_phone", "")
+st.markdown(f'<a href="{line_target_url}" target="_blank" class="btn-line">💬 開啟對你的 LINE（找男友聊聊 / 通話）</a>', unsafe_allow_html=True)
+st.caption("✨ 點擊直接開啟男友名片，隨時隨地能找你聊天或通話。")
 
-if phone_val:
-    col_call1, col_call2 = st.columns(2)
-    with col_call1:
-        st.markdown(f'<a href="{line_target_url}" target="_blank" class="btn-line">💬 開啟對你的 LINE</a>', unsafe_allow_html=True)
-    with col_call2:
-        st.markdown(f'<a href="tel:{phone_val}" class="btn-phone">📞 一鍵緊急熱線</a>', unsafe_allow_html=True)
-else:
-    st.markdown(f'<a href="{line_target_url}" target="_blank" class="btn-line">💬 開啟對你的 LINE（找男友聊聊 / 通話）</a>', unsafe_allow_html=True)
-
-st.caption("✨ 點擊「開啟對你的 LINE」會直接打開你的專屬名片，她點擊即可直接開啟對話或語音通話。")
-
-# --- 5. 一鍵加入日曆與 iPhone 自動提醒 ---
-st.markdown("""
-<div style="text-align: center; margin-top: 20px; margin-bottom: 8px;">
-    <span style="font-weight: bold; color: #D6336C; font-size: 0.95rem;">⏰ 加入手機自動提醒</span>
-</div>
-""", unsafe_allow_html=True)
-
+# --- 5. 一鍵加入日曆提醒 ---
 event_title = "🌸 LU寶貝生理期呵護提醒"
 event_details = "記得多喝溫水、肚子保暖、放鬆心情～有另一半隨時疼妳哄妳 🥰"
 gcal_start = next_period_start.strftime("%Y%m%d")
@@ -288,3 +235,18 @@ with col_cal2:
         mime="text/calendar",
         use_container_width=True
     )
+
+# --- 6. 完整保留！隨時可修改的設定面板（折疊選單，手機操作超方便） ---
+with st.expander("⚙️ 點此修改：經期日期、週期天數與悄悄話", expanded=False):
+    default_date = date.fromisoformat(data.get("last_period_start", "2026-09-21"))
+    new_period_start = st.date_input("月經開始第一天", value=default_date)
+    new_cycle_length = st.number_input("平均週期天數", min_value=21, max_value=45, value=data.get("cycle_length", 28))
+    new_msg = st.text_area("寫給寶貝的專屬悄悄話", value=data.get("sweet_message", ""))
+    
+    if st.button("💾 儲存並同步更新手帳"):
+        data["last_period_start"] = str(new_period_start)
+        data["cycle_length"] = int(new_cycle_length)
+        data["sweet_message"] = new_msg
+        save_data(data)
+        st.success("手帳已成功同步更新！")
+        st.rerun()
