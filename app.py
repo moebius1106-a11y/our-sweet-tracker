@@ -12,15 +12,15 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. 強力 CSS：徹底隱藏右下角皇冠與頭貼，修復字體顏色對比
+# 2. 強力 CSS：消除頂部留白、防止文字折行斷句、隱藏官方雜項
 st.markdown("""
 <style>
-/* 徹底去除頂部空白 */
+/* 徹底去除頂部空白，適應 LINE 與 Safari 視窗 */
 .block-container {
-    padding-top: 1rem !important;
+    padding-top: 0.8rem !important;
     padding-bottom: 2rem !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
+    padding-left: 0.8rem !important;
+    padding-right: 0.8rem !important;
 }
 
 /* 強力抹除所有官方浮水印、管理按鈕、頭貼、選單 */
@@ -43,7 +43,7 @@ div[data-testid="stDecoration"] {
     pointer-events: none !important;
 }
 
-/* 設定全站粉白底色與字體 */
+/* 設定全站底色與字體 */
 body {
     -webkit-font-smoothing: antialiased;
     font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Helvetica Neue", sans-serif;
@@ -74,32 +74,33 @@ body {
     color: #C2255C !important;
 }
 
-/* 強制修復文字顏色（解決看不到說明的問題） */
+/* 文字自適應與提示字體 */
 p, span, label, div {
     color: #4A3B40;
 }
 .hint-text {
     color: #8C6D77 !important;
-    font-size: 0.88rem !important;
+    font-size: 0.85rem !important;
     text-align: center !important;
     margin-top: 6px !important;
     display: block !important;
-    font-weight: 500 !important;
+    line-height: 1.4 !important;
 }
 
-/* 呼叫按鈕樣式 */
+/* 呼叫按鈕樣式（防止換行） */
 .btn-line {
     display: block !important;
     background: linear-gradient(135deg, #06C755 0%, #00B900 100%) !important;
     color: #FFFFFF !important;
     text-align: center !important;
-    padding: 12px 16px !important;
+    padding: 12px 14px !important;
     border-radius: 22px !important;
     font-weight: bold !important;
     text-decoration: none !important;
     margin: 6px 0 !important;
     box-shadow: 0 4px 10px rgba(6, 199, 85, 0.3) !important;
-    font-size: 1rem !important;
+    font-size: 0.98rem !important;
+    white-space: nowrap !important;
 }
 .btn-cal {
     display: block !important;
@@ -112,6 +113,7 @@ p, span, label, div {
     font-weight: bold !important;
     text-decoration: none !important;
     font-size: 0.95rem !important;
+    white-space: nowrap !important;
 }
 
 /* 下載與一般按鈕 */
@@ -123,19 +125,24 @@ p, span, label, div {
     padding: 10px 24px !important;
     font-weight: 700 !important;
     box-shadow: 0 4px 12px rgba(255, 154, 158, 0.4) !important;
+    white-space: nowrap !important;
 }
 
-/* 折疊選單（Expander）文字顏色加深修復 */
-.streamlit-expanderHeader {
-    color: #5C2D3B !important;
-    font-weight: bold !important;
-    background-color: #FFFFFF !important;
-    border-radius: 14px !important;
-}
+/* 折疊選單（Expander）修復：防止標題文字孤字折行 */
 div[data-testid="stExpander"] {
     background-color: #FFFFFF !important;
     border: 1px solid #FFE3E8 !important;
     border-radius: 16px !important;
+}
+div[data-testid="stExpander"] summary {
+    font-size: 0.92rem !important;
+    font-weight: 600 !important;
+    color: #5C2D3B !important;
+    padding: 10px 12px !important;
+}
+div[data-testid="stExpander"] summary p {
+    font-size: 0.92rem !important;
+    margin: 0 !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -259,8 +266,8 @@ with c2:
 
 # --- 4. 專屬按鈕：一鍵開啟對你的 LINE ---
 line_target_url = data.get("my_line_url", "https://line.me/ti/p/3u_xwcKRUB")
-st.markdown(f'<a href="{line_target_url}" target="_blank" class="btn-line">💬 開啟對你的 LINE（找男友聊聊 / 通話）</a>', unsafe_allow_html=True)
-st.markdown('<span class="hint-text">✨ 點擊直接開啟男友名片，隨時隨地能找你聊天或通話</span>', unsafe_allow_html=True)
+st.markdown(f'<a href="{line_target_url}" target="_blank" class="btn-line">💬 開啟男友 LINE（聊天 / 通話）</a>', unsafe_allow_html=True)
+st.markdown('<span class="hint-text">✨ 點擊直接開啟男友名片，隨時隨地找我聊天或通話</span>', unsafe_allow_html=True)
 
 # --- 5. 一鍵加入日曆提醒 ---
 event_title = "🌸 LU寶貝生理期呵護提醒"
@@ -297,8 +304,8 @@ with col_cal2:
         use_container_width=True
     )
 
-# --- 6. 隨時可修改的設定面板 ---
-with st.expander("⚙️ 點此修改：經期日期、週期天數與悄悄話", expanded=False):
+# --- 6. 隨時可修改的設定面板（精簡文字、防止孤字折行） ---
+with st.expander("⚙️ 點此修改經期設定與悄悄話", expanded=False):
     default_date = date.fromisoformat(data.get("last_period_start", "2026-09-21"))
     new_period_start = st.date_input("月經開始第一天", value=default_date)
     new_cycle_length = st.number_input("平均週期天數", min_value=21, max_value=45, value=data.get("cycle_length", 28))
