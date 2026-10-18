@@ -291,15 +291,20 @@ with c2:
     </div>
     """, unsafe_allow_html=True)
 
-# --- 亮點功能 2：聲音景觀・舒緩輕音樂與白噪音 ---
+# --- 亮點功能 2：聲音景觀・極度舒緩輕音樂與雨聲白噪音 ---
 with st.expander("🎧 點此播放舒緩輕音樂與白噪音", expanded=False):
-    st.caption("🎵 點擊播放放鬆旋律，舒緩生理期悶脹與緊繃情緒：")
-    tab_music1, tab_music2 = st.tabs(["🎹 溫暖鋼琴曲", "🌧️ 療癒雨聲白噪音"])
+    st.caption("🎵 點擊播放超輕柔旋律，讓身心平靜、舒緩悶脹緊繃：")
+    tab_music1, tab_music2 = st.tabs(["🎹 空靈輕柔鋼琴", "🌧️ 溫柔細雨白噪音"])
+    
     with tab_music1:
-        st.audio("https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=soft-piano-100-bpm-121529.mp3", format="audio/mp3")
+        st.markdown("**薩提：第1號吉諾佩蒂（極靜溫柔版）**")
+        st.audio("https://ia800501.us.archive.org/11/items/ErikSatieGymnopedieNo1_201806/Erik%20Satie%20-%20Gymnopedie%20No%201.mp3", format="audio/mp3")
+        st.caption("✨ 節奏緩慢、音色純淨，陪伴寶貝放鬆心情與入眠。")
+        
     with tab_music2:
-        st.audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=gentle-rain-17757.mp3", format="audio/mp3")
-
+        st.markdown("**窗邊靜謐細雨聲（深層舒緩）**")
+        st.audio("https://ia800301.us.archive.org/15/items/RainSoundEffect_201606/Rain_Sound_Effect.mp3", format="audio/mp3")
+        st.caption("✨ 柔和綿密的雨聲頻率，安撫經前焦慮與不適。")
 # --- 亮點功能 3：經痛舒緩與自我護理指南 ---
 with st.expander("🧘‍♀️ 經痛舒緩・自我護理小技巧", expanded=False):
     st.markdown("""
