@@ -15,6 +15,7 @@ st.set_page_config(
 # 2. 強力 CSS：消除頂部留白、防止文字折行斷句、隱藏官方雜項
 st.markdown("""
 <style>
+/* 徹底去除頂部空白，適應 LINE 與 Safari 視窗 */
 .block-container {
     padding-top: 0.8rem !important;
     padding-bottom: 2rem !important;
@@ -22,6 +23,7 @@ st.markdown("""
     padding-right: 0.8rem !important;
 }
 
+/* 強力抹除所有官方浮水印、管理按鈕、頭貼、選單 */
 #MainMenu, footer, header {
     visibility: hidden !important;
     display: none !important;
@@ -41,6 +43,7 @@ div[data-testid="stDecoration"] {
     pointer-events: none !important;
 }
 
+/* 設定全站底色與字體 */
 body {
     -webkit-font-smoothing: antialiased;
     font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Helvetica Neue", sans-serif;
@@ -50,6 +53,7 @@ body {
     background: linear-gradient(180deg, #FFF5F7 0%, #FFFFFF 100%) !important;
 }
 
+/* 卡片設計 */
 .pink-card {
     background: #FFFFFF !important;
     padding: 16px 18px !important;
@@ -70,6 +74,7 @@ body {
     color: #C2255C !important;
 }
 
+/* 文字自適應與提示字體 */
 p, span, label, div {
     color: #4A3B40;
 }
@@ -82,6 +87,7 @@ p, span, label, div {
     line-height: 1.4 !important;
 }
 
+/* 呼叫按鈕樣式（防止換行） */
 .btn-line {
     display: block !important;
     background: linear-gradient(135deg, #06C755 0%, #00B900 100%) !important;
@@ -110,6 +116,7 @@ p, span, label, div {
     white-space: nowrap !important;
 }
 
+/* 下載與一般按鈕 */
 .stButton>button, .stDownloadButton>button {
     background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%) !important;
     color: #5C2D3B !important;
@@ -121,6 +128,7 @@ p, span, label, div {
     white-space: nowrap !important;
 }
 
+/* 折疊選單（Expander）修復：防止標題文字孤字折行 */
 div[data-testid="stExpander"] {
     background-color: #FFFFFF !important;
     border: 1px solid #FFE3E8 !important;
@@ -139,6 +147,7 @@ div[data-testid="stExpander"] summary p {
 </style>
 """, unsafe_allow_html=True)
 
+# --- 即時推播函數 (方案 B: ntfy.sh) ---
 NTFY_TOPIC = "lu-care-moebius-alert"
 
 def send_push_notification(title, message, priority="default"):
@@ -179,6 +188,7 @@ def save_data(data):
 
 data = load_data()
 
+# 標題區
 st.markdown("""
 <div style="text-align: center; margin-top: 5px; margin-bottom: 15px;">
     <div style="font-size: 2rem;">🌸</div>
@@ -187,6 +197,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# --- 週期推算邏輯 ---
 period_start = date.fromisoformat(data["last_period_start"])
 cycle_days = data["cycle_length"]
 today = date.today()
@@ -211,6 +222,7 @@ else:
     phase = "🌙 經前前夕 (PMS)・溫柔守護"
     care_tip = "這兩天月經快報到了，容易水腫或下腹悶悶的，心情敏感都是正常的～別給自己壓力，凡事都有我陪著妳喔！"
 
+# --- 1. 今日暖心留言 ---
 if data.get("sweet_message"):
     st.markdown(f"""
     <div class="pink-card" style="border-left-color: #FF6584; background: #FFF7F9;">
@@ -219,6 +231,7 @@ if data.get("sweet_message"):
     </div>
     """, unsafe_allow_html=True)
 
+# --- 2. 當前狀態與暖心指引 ---
 st.markdown(f"""
 <div class="pink-card">
     <div class="status-badge">{phase}</div>
@@ -229,6 +242,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+# --- 3. 關鍵推估數據 ---
 c1, c2 = st.columns(2)
 with c1:
     st.markdown(f"""
@@ -250,10 +264,12 @@ with c2:
     </div>
     """, unsafe_allow_html=True)
 
+# --- 4. 專屬按鈕：一鍵開啟對你的 LINE ---
 line_target_url = data.get("my_line_url", "https://line.me/ti/p/3u_xwcKRUB")
 st.markdown(f'<a href="{line_target_url}" target="_blank" class="btn-line">💬 開啟男友 LINE（聊天 / 通話）</a>', unsafe_allow_html=True)
 st.markdown('<span class="hint-text">✨ 點擊直接開啟男友名片，隨時隨地找我聊天或通話</span>', unsafe_allow_html=True)
 
+# --- 5. 一鍵加入日曆提醒 ---
 event_title = "🌸 LU寶貝生理期呵護提醒"
 event_details = "記得多喝溫水、肚子保暖、放鬆心情～有另一半隨時疼妳哄妳 🥰"
 gcal_start = next_period_start.strftime("%Y%m%d")
@@ -288,6 +304,7 @@ with col_cal2:
         use_container_width=True
     )
 
+# --- 6. 隨時可修改的設定面板（精簡文字、防止孤字折行） ---
 with st.expander("⚙️ 點此修改經期設定與悄悄話", expanded=False):
     default_date = date.fromisoformat(data.get("last_period_start", "2026-09-21"))
     new_period_start = st.date_input("月經開始第一天", value=default_date)
