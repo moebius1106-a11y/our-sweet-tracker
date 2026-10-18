@@ -12,79 +12,95 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. iPhone 介面優化、隱藏 Streamlit 水印與頭貼、極致粉嫩風格
+# 2. 注入純淨 CSS（隱藏官方圖標、大頭貼，優化 iPhone 介面與粉嫩風格）
 st.markdown("""
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <style>
-    /* 隱藏 Streamlit 頂部與底部所有官方雜項、大頭貼、皇冠按鈕 */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    .viewerBadge_container__1QSob, .viewerBadge_link__1S137, [data-testid="manage-app-button"] {
-        display: none !important;
-    }
-    div[class^="viewerBadge_"] {
-        display: none !important;
-    }
+<style>
+#MainMenu {visibility: hidden; display: none !important;}
+footer {visibility: hidden; display: none !important;}
+header {visibility: hidden; display: none !important;}
+[data-testid="manage-app-button"] {display: none !important;}
+.viewerBadge_container__1QSob, .viewerBadge_link__1S137 {display: none !important;}
+div[class*="viewerBadge_"] {display: none !important;}
+div[class*="Profile"] {display: none !important;}
 
-    /* iPhone 沉浸式粉嫩背景與字體 */
-    body {
-        -webkit-font-smoothing: antialiased;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-    .stApp {
-        background: linear-gradient(180deg, #FFF6F8 0%, #FFFFFF 100%);
-    }
+body {
+    -webkit-font-smoothing: antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Helvetica Neue", sans-serif;
+}
+.stApp {
+    background: linear-gradient(180deg, #FFF5F7 0%, #FFFFFF 100%);
+}
 
-    /* 卡片設計：柔美圓角與粉紅微光陰影 */
-    .pink-card {
-        background: #FFFFFF;
-        padding: 18px 20px;
-        border-radius: 20px;
-        box-shadow: 0 8px 20px rgba(255, 182, 193, 0.25);
-        margin-bottom: 16px;
-        border-left: 6px solid #FF8FA3;
-    }
-    .pink-title {
-        color: #D6336C;
-        font-size: 1.4rem;
-        font-weight: 800;
-        letter-spacing: 0.5px;
-    }
-    .status-badge {
-        font-size: 1.15rem;
-        font-weight: bold;
-        color: #C2255C;
-    }
+.pink-card {
+    background: #FFFFFF;
+    padding: 18px 20px;
+    border-radius: 20px;
+    box-shadow: 0 6px 18px rgba(255, 175, 189, 0.2);
+    margin-bottom: 16px;
+    border-left: 6px solid #FF8FA3;
+}
+.pink-title {
+    color: #D6336C;
+    font-size: 1.45rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+.status-badge {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: #C2255C;
+}
 
-    /* 日曆與操作按鈕美化 */
-    .cal-btn {
-        display: inline-block;
-        padding: 10px 16px;
-        margin: 6px 4px;
-        border-radius: 25px;
-        text-decoration: none;
-        font-weight: bold;
-        font-size: 0.95rem;
-        text-align: center;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-    }
-    .btn-google {
-        background-color: #FFF0F5;
-        color: #D6336C !important;
-        border: 1px solid #FFCCD5;
-    }
-    .stButton>button {
-        background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%);
-        color: #5C2D3B;
-        border-radius: 22px;
-        border: none;
-        padding: 10px 24px;
-        font-weight: 700;
-        box-shadow: 0 4px 12px rgba(255, 154, 158, 0.4);
-    }
-    </style>
+/* 呼叫專用按鈕樣式 */
+.btn-line {
+    display: block;
+    background: linear-gradient(135deg, #06C755 0%, #00B900 100%);
+    color: white !important;
+    text-align: center;
+    padding: 12px 16px;
+    border-radius: 22px;
+    font-weight: bold;
+    text-decoration: none;
+    margin: 6px 0;
+    box-shadow: 0 4px 10px rgba(6, 199, 85, 0.3);
+    font-size: 1rem;
+}
+.btn-phone {
+    display: block;
+    background: linear-gradient(135deg, #FF6584 0%, #FF8FA3 100%);
+    color: white !important;
+    text-align: center;
+    padding: 12px 16px;
+    border-radius: 22px;
+    font-weight: bold;
+    text-decoration: none;
+    margin: 6px 0;
+    box-shadow: 0 4px 10px rgba(255, 101, 132, 0.3);
+    font-size: 1rem;
+}
+.btn-cal {
+    display: block;
+    background: #FFF0F5;
+    color: #D6336C !important;
+    border: 1px solid #FFCCD5;
+    text-align: center;
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.stButton>button {
+    background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%) !important;
+    color: #5C2D3B !important;
+    border-radius: 22px !important;
+    border: none !important;
+    padding: 10px 24px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 12px rgba(255, 154, 158, 0.4) !important;
+}
+</style>
 """, unsafe_allow_html=True)
 
 DATA_FILE = "cycle_data.json"
@@ -99,7 +115,10 @@ def load_data():
     return {
         "last_period_start": "2026-09-21",
         "cycle_length": 28,
-        "sweet_message": "今天也要多喝溫水、肚子暖暖的喔！最愛妳了 🥰"
+        "sweet_message": "今天也要多喝溫水、肚子暖暖的喔！最愛妳了 🥰",
+        "my_line_url": "https://line.me/ti/p/3u_xwcKRUB",
+        "my_line_id": "moebius5180",
+        "my_phone": ""
     }
 
 def save_data(data):
@@ -117,9 +136,9 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# --- 側邊欄：記錄與更新 ---
+# --- 側邊欄：記錄與設定 ---
 with st.sidebar:
-    st.header("⚙️ 週期設置與留悄悄話")
+    st.header("⚙️ 週期設置與專屬資訊")
     default_date = date.fromisoformat(data.get("last_period_start", "2026-09-21"))
     new_period_start = st.date_input("月經開始第一天", value=default_date)
     new_cycle_length = st.number_input("平均週期天數", min_value=21, max_value=45, value=data.get("cycle_length", 28))
@@ -127,10 +146,16 @@ with st.sidebar:
     st.subheader("💌 今日給 LU 寶貝的悄悄話")
     new_msg = st.text_area("寫下暖心留言", value=data.get("sweet_message", ""))
     
+    st.subheader("📞 男友專屬聯絡設定")
+    line_url_input = st.text_input("你的 LINE 加好友連結", value=data.get("my_line_url", "https://line.me/ti/p/3u_xwcKRUB"))
+    phone_input = st.text_input("你的電話號碼 (選填)", value=data.get("my_phone", ""))
+    
     if st.button("💾 儲存並同步更新"):
         data["last_period_start"] = str(new_period_start)
         data["cycle_length"] = int(new_cycle_length)
         data["sweet_message"] = new_msg
+        data["my_line_url"] = line_url_input
+        data["my_phone"] = phone_input
         save_data(data)
         st.success("已更新！")
         st.rerun()
@@ -202,21 +227,40 @@ with c2:
     </div>
     """, unsafe_allow_html=True)
 
-# --- 4. 一鍵加入日曆與 iPhone 自動提醒 ---
+# --- 4. 專屬按鈕：一鍵開啟對你的 LINE 與通話 ---
 st.markdown("""
-<div style="text-align: center; margin-top: 10px; margin-bottom: 8px;">
-    <span style="font-weight: bold; color: #D6336C; font-size: 0.95rem;">⏰ 點擊下方加入手機自動提醒</span>
+<div style="margin-top: 18px; margin-bottom: 8px; text-align: center;">
+    <span style="font-size: 1.05rem; font-weight: bold; color: #D6336C;">🧸 專屬找男友按鈕</span>
 </div>
 """, unsafe_allow_html=True)
 
-# 產生 Google 日曆連結
+line_target_url = data.get("my_line_url", "https://line.me/ti/p/3u_xwcKRUB")
+phone_val = data.get("my_phone", "")
+
+if phone_val:
+    col_call1, col_call2 = st.columns(2)
+    with col_call1:
+        st.markdown(f'<a href="{line_target_url}" target="_blank" class="btn-line">💬 開啟對你的 LINE</a>', unsafe_allow_html=True)
+    with col_call2:
+        st.markdown(f'<a href="tel:{phone_val}" class="btn-phone">📞 一鍵緊急熱線</a>', unsafe_allow_html=True)
+else:
+    st.markdown(f'<a href="{line_target_url}" target="_blank" class="btn-line">💬 開啟對你的 LINE（找男友聊聊 / 通話）</a>', unsafe_allow_html=True)
+
+st.caption("✨ 點擊「開啟對你的 LINE」會直接打開你的專屬名片，她點擊即可直接開啟對話或語音通話。")
+
+# --- 5. 一鍵加入日曆與 iPhone 自動提醒 ---
+st.markdown("""
+<div style="text-align: center; margin-top: 20px; margin-bottom: 8px;">
+    <span style="font-weight: bold; color: #D6336C; font-size: 0.95rem;">⏰ 加入手機自動提醒</span>
+</div>
+""", unsafe_allow_html=True)
+
 event_title = "🌸 LU寶貝生理期呵護提醒"
 event_details = "記得多喝溫水、肚子保暖、放鬆心情～有另一半隨時疼妳哄妳 🥰"
 gcal_start = next_period_start.strftime("%Y%m%d")
 gcal_end = (next_period_start + timedelta(days=1)).strftime("%Y%m%d")
 gcal_url = f"https://calendar.google.com/calendar/render?action=TEMPLATE&text={urllib.parse.quote(event_title)}&dates={gcal_start}/{gcal_end}&details={urllib.parse.quote(event_details)}"
 
-# 產生 Apple 行事曆 (.ics 檔案)
 ics_content = f"""BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//LU Baby Care//TW
@@ -235,14 +279,12 @@ END:VCALENDAR"""
 
 col_cal1, col_cal2 = st.columns(2)
 with col_cal1:
-    st.markdown(f'<a href="{gcal_url}" target="_blank" class="cal-btn btn-google" style="display:block;">📅 Google 日曆</a>', unsafe_allow_html=True)
+    st.markdown(f'<a href="{gcal_url}" target="_blank" class="btn-cal">📅 Google 日曆</a>', unsafe_allow_html=True)
 with col_cal2:
     st.download_button(
-        label="🍏 Apple 行事曆提醒",
+        label="🍏 Apple 行事曆",
         data=ics_content,
         file_name="lu_care_reminder.ics",
         mime="text/calendar",
         use_container_width=True
     )
-
-st.caption("✨ iPhone 用戶點擊「Apple 行事曆提醒」即可自動匯入行事曆並設定鬧鐘提醒。")
