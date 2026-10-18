@@ -12,14 +12,10 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. 強力 CSS：徹底鎖定淺色粉白、解決輸入框與折疊面板反黑問題
+# 2. 乾淨純粹的排版 CSS（不與系統主題打架）
 st.markdown("""
 <style>
-/* 強制停用全站深色模式色彩 */
-:root {
-    color-scheme: light !important;
-}
-
+/* 去除頂部與邊界留白 */
 .block-container {
     padding-top: 0.8rem !important;
     padding-bottom: 2rem !important;
@@ -45,16 +41,6 @@ div[data-testid="stDecoration"] {
     visibility: hidden !important;
 }
 
-body {
-    -webkit-font-smoothing: antialiased;
-    font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Helvetica Neue", sans-serif;
-    color: #4A3B40 !important;
-    background-color: #FFF5F7 !important;
-}
-.stApp {
-    background: linear-gradient(180deg, #FFF5F7 0%, #FFFFFF 100%) !important;
-}
-
 /* 粉紅卡片 */
 .pink-card {
     background: #FFFFFF !important;
@@ -75,10 +61,6 @@ body {
     font-weight: bold !important;
     color: #C2255C !important;
 }
-
-p, span, label, div, h1, h2, h3, h4 {
-    color: #4A3B40 !important;
-}
 .hint-text {
     color: #8C6D77 !important;
     font-size: 0.85rem !important;
@@ -87,44 +69,7 @@ p, span, label, div, h1, h2, h3, h4 {
     display: block !important;
 }
 
-/* --- 核心修復：徹底消除反黑（Expander 與輸入框強制純白底＋深色字） --- */
-div[data-testid="stExpander"] {
-    background-color: #FFFFFF !important;
-    border: 1px solid #FFCCD5 !important;
-    border-radius: 16px !important;
-    margin-bottom: 12px !important;
-}
-div[data-testid="stExpander"] summary {
-    background-color: #FFFFFF !important;
-    border-radius: 16px !important;
-}
-div[data-testid="stExpander"] summary * {
-    color: #D6336C !important;
-    font-weight: 700 !important;
-    font-size: 0.95rem !important;
-    fill: #D6336C !important;
-}
-div[data-testid="stExpander"] details[open] summary {
-    border-bottom: 1px solid #FFE3E8 !important;
-}
-
-/* 強制修復所有輸入框（日期、數字、文字框）不反黑 */
-div[data-testid="stTextInput"] input,
-div[data-testid="stDateInput"] input,
-div[data-testid="stNumberInput"] input,
-div[data-testid="stTextArea"] textarea {
-    background-color: #FFFFFF !important;
-    color: #333333 !important;
-    border: 1.5px solid #FFCCD5 !important;
-    border-radius: 12px !important;
-}
-div[data-testid="stNumberInput"] button {
-    background-color: #FFF0F3 !important;
-    color: #D6336C !important;
-    border: 1px solid #FFCCD5 !important;
-}
-
-/* 按鈕樣式 */
+/* 呼叫 LINE 與行事曆按鈕 */
 .btn-line {
     display: block !important;
     background: linear-gradient(135deg, #06C755 0%, #00B900 100%) !important;
@@ -152,6 +97,8 @@ div[data-testid="stNumberInput"] button {
     font-size: 0.95rem !important;
     white-space: nowrap !important;
 }
+
+/* 按鈕美化 */
 .stButton>button, .stDownloadButton>button {
     background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%) !important;
     color: #5C2D3B !important;
@@ -163,8 +110,14 @@ div[data-testid="stNumberInput"] button {
     white-space: nowrap !important;
 }
 
-div[data-testid="stProgressBar"] > div > div {
-    background-color: #FF8FA3 !important;
+/* 確保 BaseWeb 日期與輸入框背景全為純白、文字深色清晰 */
+[data-baseweb="input"], [data-baseweb="base-input"], textarea {
+    background-color: #FFFFFF !important;
+    color: #4A3B40 !important;
+    border-radius: 12px !important;
+}
+[data-baseweb="input"] input {
+    color: #4A3B40 !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -332,7 +285,7 @@ with col_cal2:
         use_container_width=True
     )
 
-# 7. 修改經期設定面板（完全防反黑處理）
+# 7. 修改經期設定面板
 with st.expander("⚙️ 點此修改經期設定與悄悄話", expanded=False):
     default_date = date.fromisoformat(data.get("last_period_start", "2026-09-21"))
     new_period_start = st.date_input("月經開始第一天", value=default_date)
