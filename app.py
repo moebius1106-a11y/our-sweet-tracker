@@ -3,6 +3,7 @@ from datetime import date, timedelta
 import json
 import os
 import urllib.parse
+import requests
 
 # 1. 頁面基本配置
 st.set_page_config(
@@ -11,10 +12,10 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. 徹底消除頂部留白、隱藏官方按鈕與大頭貼、優化手機排版
+# 2. 注入純淨 CSS（消除頂部留白、隱藏官方雜項與大頭貼、粉嫩圓角卡片）
 st.markdown("""
 <style>
-/* 徹底去除頂部巨大空白，讓畫面緊湊精緻 */
+/* 徹底去除頂部巨大空白，讓手機版緊湊精緻 */
 .block-container {
     padding-top: 1rem !important;
     padding-bottom: 2rem !important;
@@ -59,7 +60,7 @@ body {
     color: #C2255C;
 }
 
-/* 呼叫專用按鈕樣式 */
+/* 呼叫按鈕樣式 */
 .btn-line {
     display: block;
     background: linear-gradient(135deg, #06C755 0%, #00B900 100%);
@@ -97,6 +98,25 @@ body {
 }
 </style>
 """, unsafe_allow_html=True)
+
+# --- 即時推播函數 (方案 B: ntfy.sh) ---
+NTFY_TOPIC = "lu-care-moebius-alert"
+
+def send_push_notification(title, message, priority="default"):
+    try:
+        headers = {
+            "Title": title.encode("utf-8"),
+            "Priority": priority,
+            "Tags": "cherry_blossom,heart"
+        }
+        requests.post(
+            f"https://ntfy.sh/{NTFY_TOPIC}",
+            data=message.encode("utf-8"),
+            headers=headers,
+            timeout=5
+        )
+    except Exception:
+        pass
 
 DATA_FILE = "cycle_data.json"
 
@@ -236,7 +256,7 @@ with col_cal2:
         use_container_width=True
     )
 
-# --- 6. 完整保留！隨時可修改的設定面板（折疊選單，手機操作超方便） ---
+# --- 6. 隨時可修改的設定面板（更新時自動推播到你的 Android 手機） ---
 with st.expander("⚙️ 點此修改：經期日期、週期天數與悄悄話", expanded=False):
     default_date = date.fromisoformat(data.get("last_period_start", "2026-09-21"))
     new_period_start = st.date_input("月經開始第一天", value=default_date)
@@ -248,5 +268,13 @@ with st.expander("⚙️ 點此修改：經期日期、週期天數與悄悄話"
         data["cycle_length"] = int(new_cycle_length)
         data["sweet_message"] = new_msg
         save_data(data)
-        st.success("手帳已成功同步更新！")
+        
+        # 🔔 自動發送通知給你的 Android 手機
+        send_push_notification(
+            title="🌸 LU寶貝的手帳有新更新！",
+            message=f"寶貝更新了手帳！\n最後經期開始日設為：{new_period_start}\n週期：{new_cycle_length}天",
+            priority="high"
+        )
+        
+        st.success("手帳已成功同步更新！已發送通知提醒男友 🥰")
         st.rerun()
