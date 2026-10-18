@@ -12,10 +12,14 @@ st.set_page_config(
     layout="centered"
 )
 
-# 2. 強力 CSS：消除頂部留白、防止文字折行斷句、隱藏官方雜項
+# 2. 強力 CSS：徹底鎖定淺色粉白、解決輸入框與折疊面板反黑問題
 st.markdown("""
 <style>
-/* 徹底去除頂部空白，適應 LINE 與 Safari 視窗 */
+/* 強制停用全站深色模式色彩 */
+:root {
+    color-scheme: light !important;
+}
+
 .block-container {
     padding-top: 0.8rem !important;
     padding-bottom: 2rem !important;
@@ -23,7 +27,7 @@ st.markdown("""
     padding-right: 0.8rem !important;
 }
 
-/* 強力抹除所有官方浮水印、管理按鈕、頭貼、選單 */
+/* 隱藏官方雜項與管理工具 */
 #MainMenu, footer, header {
     visibility: hidden !important;
     display: none !important;
@@ -39,21 +43,19 @@ div[data-testid="stStatusWidget"],
 div[data-testid="stDecoration"] {
     display: none !important;
     visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
 }
 
-/* 設定全站底色與字體 */
 body {
     -webkit-font-smoothing: antialiased;
     font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Helvetica Neue", sans-serif;
     color: #4A3B40 !important;
+    background-color: #FFF5F7 !important;
 }
 .stApp {
     background: linear-gradient(180deg, #FFF5F7 0%, #FFFFFF 100%) !important;
 }
 
-/* 卡片設計 */
+/* 粉紅卡片 */
 .pink-card {
     background: #FFFFFF !important;
     padding: 16px 18px !important;
@@ -74,9 +76,8 @@ body {
     color: #C2255C !important;
 }
 
-/* 文字自適應與提示字體 */
-p, span, label, div {
-    color: #4A3B40;
+p, span, label, div, h1, h2, h3, h4 {
+    color: #4A3B40 !important;
 }
 .hint-text {
     color: #8C6D77 !important;
@@ -84,10 +85,46 @@ p, span, label, div {
     text-align: center !important;
     margin-top: 6px !important;
     display: block !important;
-    line-height: 1.4 !important;
 }
 
-/* 呼叫按鈕樣式（防止換行） */
+/* --- 核心修復：徹底消除反黑（Expander 與輸入框強制純白底＋深色字） --- */
+div[data-testid="stExpander"] {
+    background-color: #FFFFFF !important;
+    border: 1px solid #FFCCD5 !important;
+    border-radius: 16px !important;
+    margin-bottom: 12px !important;
+}
+div[data-testid="stExpander"] summary {
+    background-color: #FFFFFF !important;
+    border-radius: 16px !important;
+}
+div[data-testid="stExpander"] summary * {
+    color: #D6336C !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    fill: #D6336C !important;
+}
+div[data-testid="stExpander"] details[open] summary {
+    border-bottom: 1px solid #FFE3E8 !important;
+}
+
+/* 強制修復所有輸入框（日期、數字、文字框）不反黑 */
+div[data-testid="stTextInput"] input,
+div[data-testid="stDateInput"] input,
+div[data-testid="stNumberInput"] input,
+div[data-testid="stTextArea"] textarea {
+    background-color: #FFFFFF !important;
+    color: #333333 !important;
+    border: 1.5px solid #FFCCD5 !important;
+    border-radius: 12px !important;
+}
+div[data-testid="stNumberInput"] button {
+    background-color: #FFF0F3 !important;
+    color: #D6336C !important;
+    border: 1px solid #FFCCD5 !important;
+}
+
+/* 按鈕樣式 */
 .btn-line {
     display: block !important;
     background: linear-gradient(135deg, #06C755 0%, #00B900 100%) !important;
@@ -115,8 +152,6 @@ p, span, label, div {
     font-size: 0.95rem !important;
     white-space: nowrap !important;
 }
-
-/* 下載與一般按鈕 */
 .stButton>button, .stDownloadButton>button {
     background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%) !important;
     color: #5C2D3B !important;
@@ -128,26 +163,13 @@ p, span, label, div {
     white-space: nowrap !important;
 }
 
-/* 折疊選單（Expander）修復：防止標題文字孤字折行 */
-div[data-testid="stExpander"] {
-    background-color: #FFFFFF !important;
-    border: 1px solid #FFE3E8 !important;
-    border-radius: 16px !important;
-}
-div[data-testid="stExpander"] summary {
-    font-size: 0.92rem !important;
-    font-weight: 600 !important;
-    color: #5C2D3B !important;
-    padding: 10px 12px !important;
-}
-div[data-testid="stExpander"] summary p {
-    font-size: 0.92rem !important;
-    margin: 0 !important;
+div[data-testid="stProgressBar"] > div > div {
+    background-color: #FF8FA3 !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# --- 即時推播函數 (方案 B: ntfy.sh) ---
+# 後台即時推播函數
 NTFY_TOPIC = "lu-care-moebius-alert"
 
 def send_push_notification(title, message, priority="default"):
@@ -193,11 +215,11 @@ st.markdown("""
 <div style="text-align: center; margin-top: 5px; margin-bottom: 15px;">
     <div style="font-size: 2rem;">🌸</div>
     <div class="pink-title">我的 LU 寶貝專屬手帳</div>
-    <div style="color: #A37081; font-size: 0.88rem; margin-top: 3px;">隨時守護妳的身體與好心情・專屬紀錄</div>
+    <div style="color: #8C6D77; font-size: 0.88rem; margin-top: 3px;">隨時守護妳的身體與好心情・專屬紀錄</div>
 </div>
 """, unsafe_allow_html=True)
 
-# --- 週期推算邏輯 ---
+# 週期推算邏輯
 period_start = date.fromisoformat(data["last_period_start"])
 cycle_days = data["cycle_length"]
 today = date.today()
@@ -208,6 +230,7 @@ fertile_start = ovulation_date - timedelta(days=5)
 fertile_end = ovulation_date + timedelta(days=1)
 
 days_since_start = (today - period_start).days % cycle_days
+day_in_cycle = days_since_start + 1
 
 if days_since_start < 5:
     phase = "🩸 生理期中・好好休息"
@@ -222,7 +245,7 @@ else:
     phase = "🌙 經前前夕 (PMS)・溫柔守護"
     care_tip = "這兩天月經快報到了，容易水腫或下腹悶悶的，心情敏感都是正常的～別給自己壓力，凡事都有我陪著妳喔！"
 
-# --- 1. 今日暖心留言 ---
+# 1. 今日暖心留言
 if data.get("sweet_message"):
     st.markdown(f"""
     <div class="pink-card" style="border-left-color: #FF6584; background: #FFF7F9;">
@@ -231,18 +254,23 @@ if data.get("sweet_message"):
     </div>
     """, unsafe_allow_html=True)
 
-# --- 2. 當前狀態與暖心指引 ---
+# 2. 當前狀態卡片
 st.markdown(f"""
 <div class="pink-card">
     <div class="status-badge">{phase}</div>
-    <div style="color: #8C6D77; font-size: 0.9rem; margin-top: 4px;">目前是週期的第 <b>{days_since_start + 1}</b> 天</div>
+    <div style="color: #8C6D77; font-size: 0.9rem; margin-top: 4px;">目前是週期的第 <b>{day_in_cycle}</b> 天 / 共 {cycle_days} 天</div>
     <div style="background: #FFF0F3; padding: 12px 14px; border-radius: 12px; margin-top: 10px; color: #5C3A45; font-size: 0.95rem; line-height: 1.45;">
         💡 <b>貼心小叮嚀：</b> {care_tip}
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# --- 3. 關鍵推估數據 ---
+# 3. 穩定版原生進度條
+progress_ratio = min(max(day_in_cycle / cycle_days, 0.0), 1.0)
+st.markdown("<span style='font-size:0.85rem; font-weight:bold; color:#D6336C;'>🌸 本月週期進度：</span>", unsafe_allow_html=True)
+st.progress(progress_ratio)
+
+# 4. 推估數據卡片
 c1, c2 = st.columns(2)
 with c1:
     st.markdown(f"""
@@ -264,12 +292,12 @@ with c2:
     </div>
     """, unsafe_allow_html=True)
 
-# --- 4. 專屬按鈕：一鍵開啟對你的 LINE ---
+# 5. 一鍵開啟男友 LINE
 line_target_url = data.get("my_line_url", "https://line.me/ti/p/3u_xwcKRUB")
 st.markdown(f'<a href="{line_target_url}" target="_blank" class="btn-line">💬 開啟男友 LINE（聊天 / 通話）</a>', unsafe_allow_html=True)
 st.markdown('<span class="hint-text">✨ 點擊直接開啟男友名片，隨時隨地找我聊天或通話</span>', unsafe_allow_html=True)
 
-# --- 5. 一鍵加入日曆提醒 ---
+# 6. 行事曆提醒
 event_title = "🌸 LU寶貝生理期呵護提醒"
 event_details = "記得多喝溫水、肚子保暖、放鬆心情～有另一半隨時疼妳哄妳 🥰"
 gcal_start = next_period_start.strftime("%Y%m%d")
@@ -304,7 +332,7 @@ with col_cal2:
         use_container_width=True
     )
 
-# --- 6. 隨時可修改的設定面板（精簡文字、防止孤字折行） ---
+# 7. 修改經期設定面板（完全防反黑處理）
 with st.expander("⚙️ 點此修改經期設定與悄悄話", expanded=False):
     default_date = date.fromisoformat(data.get("last_period_start", "2026-09-21"))
     new_period_start = st.date_input("月經開始第一天", value=default_date)
